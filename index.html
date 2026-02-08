@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="MZ세대를 위한 팩폭 사주 분석 - 천간 오행으로 알아보는 내 성격, 연애운, 재물운, 사회운">
+    <meta name="keywords" content="사주, 운세, MBTI, 천간, 오행, 연애운, 재물운, 무료운세">
+    <title>🌙 점술가 The Moon - MZ세대 팩폭 사주</title>
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --glass: rgba(15, 23, 42, 0.88);
+            --border: rgba(255, 255, 255, 0.1);
+            --txt: #f0f4ff;
+            --txt2: #94a3b8;
+            --accent: #a855f7;
+            --pink: #ff6b9d;
+            --cyan: #00f5d4;
+            --yellow: #ffd166
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--txt);
+            min-height: 100vh;
+            line-height: 1.75
+        }
+
+        #bgVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 20%;
+            z-index: -3;
+            opacity: 0.55;
+            mix-blend-mode: screen
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: -2
+        }
+
+        #trailCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none
+        }
+
+        .wrap {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px 50px
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px 18px;
+            margin-bottom: 14px
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--pink), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px
+        }
+
+        .sub {
+            text-align: center;
+            color: var(--txt2);
+            font-size: .85rem;
+            margin-bottom: 20px
+        }
+
+        .sec-title {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .sec-title .nm {
+            color: var(--cyan)
+        }
+
+        .sec-title .sub-t {
+            font-size: .65rem;
+            color: #9ca3af;
+            font-weight: 400;
+            margin-left: 8px
+        }
+
+        .fortune-sel {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px
+        }
+
+        .fortune-sel button {
+            flex: 1;
+            padding: 10px 6px;
+            border: 2px solid var(--border);
+            background: rgba(0, 0, 0, .3);
+            color: var(--txt2);
+            font-size: .75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: .2s
+        }
+
+        .fortune-sel button.on {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 245, 212, .1)
+        }
+
+        .form-g {
+            margin-bottom: 14px
+        }
+
+        .form-g label {
+            display: block;
+            font-size: .8rem;
+            color: var(--txt2);
+            margin-bottom: 6px
+        }
+
+        .form-g input,
+        .form-g select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--txt);
+            font-size: .95rem
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px
+        }
+
+        .tab-row {
+            display: flex;
+            background: rgba(0, 0, 0, .3);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 14px
+        }
+
+        .tab-row button {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: 0;
+            color: var(--txt2);
+            font-size: .8rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: .2s
+        }
+
+        .tab-row button.on {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .tab-c {
+            display: none
+        }
+
+        .tab-c.on {
+            display: block
+        }
+
+        .chk-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px
+        }
+
+        .chk-row input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent)
+        }
+
+        .chk-row label {
+            color: var(--txt2);
+            font-size: .8rem
+        }
+
+        .submit {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--pink), var(--accent));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .97);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center
+        }
+
+        .ld {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(0, 245, 212, .2);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            animation: sp 1s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        #result {
+            display: none
+        }
+
+        .hero {
+            text-align: center;
+            padding: 16px 0
+        }
+
+        .soul-c {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 0 25px var(--yellow));
+            margin: 8px 0
+        }
+
+        .soul-t {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--pink);
+            margin-bottom: 8px
+        }
+
+        .mbti-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, var(--cyan), var(--accent));
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px
+        }
+
+        .theme-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px
+        }
+
+        .theme-tabs button {
+            flex: 1;
+            padding: 10px 4px;
+            border: 2px solid var(--border);
+            background: rgba(0, 0, 0, .3);
+            color: var(--txt2);
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: .2s
+        }
+
+        .theme-tabs button.on {
+            border-color: var(--pink);
+            color: var(--pink);
+            background: rgba(255, 107, 157, .1)
+        }
+
+        .story {
+            color: var(--txt);
+            font-size: .92rem;
+            line-height: 1.9
+        }
+
+        .advice-box {
+            background: linear-gradient(135deg, rgba(255, 107, 157, .1), rgba(168, 85, 247, .1));
+            border: 1px solid var(--pink);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 14px
+        }
+
+        .advice-t {
+            color: var(--pink);
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: .9rem
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 8px
+        }
+
+        .stat-row img {
+            width: 26px;
+            height: 26px;
+            object-fit: contain
+        }
+
+        .stat-track {
+            flex: 1;
+            height: 9px;
+            background: rgba(0, 0, 0, .4);
+            border-radius: 5px;
+            overflow: hidden
+        }
+
+        .stat-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            transition: width 1.2s
+        }
+
+        .stat-n {
+            width: 22px;
+            text-align: right;
+            font-weight: 700;
+            font-size: .85rem
+        }
+
+        .luck-box {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(0, 0, 0, .3);
+            border-radius: 10px
+        }
+
+        .luck-dot {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 16px currentColor
+        }
+
+        .luck-info strong {
+            display: block;
+            color: var(--yellow);
+            margin-bottom: 3px;
+            font-size: .85rem
+        }
+
+        .luck-info span {
+            color: var(--txt2);
+            font-size: .8rem
+        }
+
+        .quest-box {
+            background: linear-gradient(135deg, rgba(0, 245, 212, .1), rgba(96, 165, 250, .1));
+            border: 1px solid var(--cyan);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px
+        }
+
+        .quest-t {
+            color: var(--cyan);
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: .85rem
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px
+        }
+
+        .reset {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--txt2);
+            font-size: .9rem;
+            cursor: pointer
+        }
+
+        .kakao-btn {
+            flex: 1;
+            padding: 12px;
+            background: #FEE500;
+            border: none;
+            border-radius: 10px;
+            color: #3C1E1E;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px
+        }
+
+        .ad {
+            margin-top: 18px;
+            padding: 24px;
+            background: rgba(0, 0, 0, .2);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            text-align: center;
+            color: var(--txt2);
+            font-size: .75rem
+        }
+
+        .encyclopedia {
+            margin-top: 40px
+        }
+
+        .encyclopedia h2 {
+            font-size: 1.2rem;
+            color: var(--cyan);
+            margin-bottom: 20px;
+            text-align: center
+        }
+
+        .enc-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px
+        }
+
+        .enc-card h3 {
+            color: var(--pink);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .enc-card h3 span {
+            font-size: 1.5rem
+        }
+
+        .enc-card p {
+            color: var(--txt2);
+            font-size: .85rem;
+            line-height: 1.8
+        }
+    </style>
+</head>
+
+<body>
+    <video id="bgVideo" autoplay loop muted playsinline>
+        <source src="images/bg_video.mp4" type="video/mp4">
+    </video>
+    <div id="overlay"></div>
+    <canvas id="trailCanvas"></canvas>
+    <div class="wrap">
+        <div id="inputSection" class="card">
+            <h1>🌙 점술가 The Moon</h1>
+            <p class="sub">MZ세대를 위한 팩폭 사주 🔥</p>
+            <div class="form-g"><label>📛 이름/닉네임</label><input type="text" id="userName" placeholder="ex) 럭키민수"
+                    maxlength="20"></div>
+            <div class="fortune-sel"><button class="on" data-t="today">⚡오늘</button><button
+                    data-t="week">📅이번주</button><button data-t="year">🚀1년</button></div>
+            <div class="tab-row"><button class="on" data-tab="quick">⚡빠른입력</button><button
+                    data-tab="detail">📅선택</button></div>
+            <div id="tab-quick" class="tab-c on">
+                <div class="form-g"><label>🎂 생년월일 8자리</label><input type="text" id="quickDate" placeholder="19990101"
+                        maxlength="8" inputmode="numeric"></div>
+            </div>
+            <div id="tab-detail" class="tab-c">
+                <div class="form-g"><label>🎂 생년월일</label>
+                    <div class="grid-3"><select id="selYear"></select><select id="selMonth"></select><select
+                            id="selDay"></select></div>
+                </div>
+            </div>
+            <div class="form-g"><label>⏰ 태어난 시간</label>
+                <div class="grid-3" id="timeInputs"><select id="selAmpm">
+                        <option value="AM">오전</option>
+                        <option value="PM">오후</option>
+                    </select><select id="selHour"></select><select id="selMinute"></select></div>
+                <div class="chk-row"><input type="checkbox" id="unknownTime"><label for="unknownTime">시간 모름</label>
+                </div>
+            </div>
+            <button class="submit" onclick="analyze()">🔮 내 운명 까발리기</button>
+        </div>
+        <div id="loading">
+            <div class="ld"></div>
+            <p style="margin-top:14px;color:var(--cyan)">천기누설 중... 🤫</p>
+        </div>
+        <div id="result">
+            <div class="card hero">
+                <div class="sec-title" style="justify-content:center">✨ <span class="nm" id="n1">OOO</span>님의 영혼 캐릭터
+                </div>
+                <div id="soulC" class="soul-c"></div>
+                <div id="soulT" class="soul-t"></div>
+                <div id="mbtiBadge" class="mbti-badge"></div>
+            </div>
+            <div class="card">
+                <div class="theme-tabs"><button class="on" data-th="base">🏠 기본</button><button data-th="love">💘
+                        연애</button><button data-th="money">💰 재물</button><button data-th="work">⚔️ 사회</button></div>
+                <div id="storyBox" class="story"></div>
+                <div class="advice-box">
+                    <div class="advice-t">💀 팩폭 조언</div>
+                    <p id="adviceTxt"></p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="sec-title">🧬 <span class="nm" id="n2">OOO</span>님의 영혼 성분표 <span class="sub-t">| 오행의
+                        기운</span></div>
+                <div id="statChart"></div>
+            </div>
+            <div class="card">
+                <div class="sec-title">🍀 <span class="nm" id="n3">OOO</span>님의 치트키</div>
+                <div id="luckBox" class="luck-box"></div>
+                <div class="quest-box">
+                    <div class="quest-t">🎯 오늘의 퀘스트</div>
+                    <p id="questTxt"></p>
+                </div>
+            </div>
+            <div class="btn-row"><button class="reset" onclick="location.reload()">🔄 다시하기</button><button
+                    class="kakao-btn" onclick="shareKakao()">💬 자랑하기</button></div>
+            <div class="ad">광고 영역</div>
+        </div>
+        <section class="encyclopedia">
+            <h2>📚 천간 성격 도감</h2>
+            <article class="enc-card">
+                <h3><span>甲</span> 갑목 - 큰 나무의 기운</h3>
+                <p>갑목(甲木)은 하늘을 향해 곧게 뻗어 올라가는 거대한 나무의 기운을 상징합니다. 이 기운을 가진 사람은 리더십이 강하고 정의감이 넘치며, 자신만의 원칙과 소신을 끝까지 지키려는
+                    성향이 있습니다. 마치 백 년 된 거목처럼 흔들리지 않는 뚝심과 고집이 특징이죠. 하지만 이러한 강직함이 때로는 융통성 부족으로 비춰질 수 있으며, 타인의 의견을 수용하는 데
+                    어려움을 겪기도 합니다. 갑목인은 새로운 것을 시작하는 개척자 정신이 있어 사업이나 프로젝트의 선두에 서는 것을 좋아합니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>乙</span> 을목 - 덩굴과 풀의 기운</h3>
+                <p>을목(乙木)은 바위틈에서도 자라나는 작은 풀과 덩굴의 생명력을 상징합니다. 갑목이 큰 나무라면 을목은 유연하게 휘어지는 잔디나 덩굴처럼 부드럽고 적응력이 뛰어납니다. 겉보기엔 연약해
+                    보이지만 어떤 환경에서도 살아남는 강인한 생존력을 지녔죠. 을목인은 눈치가 빠르고 협력적이며, 주변 상황을 잘 파악해 최적의 위치를 찾아갑니다. 다만 지나친 눈치 보기나
+                    우유부단함으로 힘들어할 때도 있습니다. 대인관계에서 조화를 중시하며 갈등을 피하려는 경향이 있습니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>丙</span> 병화 - 태양의 기운</h3>
+                <p>병화(丙火)는 이 세상 모든 것을 환하게 비추는 태양의 에너지를 상징합니다. 이 기운을 가진 사람은 어디서든 분위기 메이커 역할을 하며, 밝고 긍정적인 에너지를 주변에 퍼뜨립니다.
+                    솔직하고 표현력이 풍부해 자신의 감정을 숨기지 않으며, 칭찬을 받으면 더욱 빛나는 타입입니다. 하지만 관심받고 싶은 욕구가 강해 때로는 자기중심적으로 보일 수 있고, 감정 기복이
+                    있을 수 있습니다. 정열적이고 낙천적인 성격 덕분에 많은 사람들에게 사랑받는 매력을 지녔습니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>丁</span> 정화 - 촛불의 기운</h3>
+                <p>정화(丁火)는 어둠 속에서 은은하게 빛나는 촛불이나 등불의 따뜻함을 상징합니다. 병화가 태양이라면 정화는 작지만 꺼지지 않는 불꽃처럼 내면에 깊은 열정을 품고 있습니다. 겉으로는
+                    차분하고 조용해 보이지만 속에는 강한 감수성과 예술적 기질이 숨어있죠. 정화인은 세심하고 배려심이 깊어 타인의 감정을 잘 읽지만, 그만큼 상처도 쉽게 받습니다. 한번 마음에 품은
+                    것은 오래 간직하며, 집념이 강해 목표를 향해 묵묵히 나아갑니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>戊</span> 무토 - 산과 대지의 기운</h3>
+                <p>무토(戊土)는 움직이지 않는 거대한 산이나 너른 대지의 안정감을 상징합니다. 이 기운을 가진 사람은 믿음직스럽고 듬직하며, 주변 사람들에게 든든한 버팀목이 되어줍니다. 변화보다는
+                    안정을 추구하고, 한번 자리 잡으면 쉽게 움직이지 않는 성향이 있죠. 포용력이 넓어 다양한 사람들을 품을 수 있지만, 고집이 세고 변화에 느린 편입니다. 무토인은 신뢰감이 있어
+                    리더나 중재자 역할을 맡는 경우가 많습니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>己</span> 기토 - 논밭의 기운</h3>
+                <p>기토(己土)는 생명을 키워내는 논밭이나 정원의 비옥한 흙을 상징합니다. 무토가 거대한 산이라면 기토는 부드럽게 만물을 품어 성장시키는 대지입니다. 이 기운을 가진 사람은 현실적이고
+                    실용적이며, 자기 사람에게는 한없이 베푸는 따뜻함이 있습니다. 다만 겉으로는 순해 보여도 속으로는 계산이 빠르고, 손해 볼 일은 철저히 피하는 영리함도 있습니다. 기토인은
+                    다재다능하고 여러 분야에 관심이 많아 다양한 재능을 발휘합니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>庚</span> 경금 - 강철의 기운</h3>
+                <p>경금(庚金)은 단단하고 날카로운 쇠붙이, 무기나 도끼 같은 강철의 기운을 상징합니다. 이 기운을 가진 사람은 정의롭고 의협심이 강하며, 불의를 보면 참지 못하는 성격입니다. 결단력이
+                    뛰어나고 추진력이 강해 한번 정한 목표는 반드시 이루려 합니다. 하지만 너무 직설적이고 날카로워 주변 사람들에게 상처를 줄 때가 있습니다. 경금인은 자기 관리가 철저하고 책임감이
+                    강해 맡은 일을 끝까지 해내는 신뢰를 줍니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>辛</span> 신금 - 보석의 기운</h3>
+                <p>신금(辛金)은 세공된 보석이나 정교한 장신구처럼 섬세하고 아름다운 기운을 상징합니다. 경금이 원석이라면 신금은 다듬어진 다이아몬드처럼 예리하고 날카로운 감각을 지녔습니다. 이 기운을
+                    가진 사람은 자존심이 강하고 완벽을 추구하며, 예민한 감수성으로 디테일을 놓치지 않습니다. 다만 남의 시선을 의식하고 비판에 민감한 편이라 스트레스를 받기 쉽습니다. 신금인은
+                    품위와 격조를 중시하며 자신만의 기준이 확고합니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>壬</span> 임수 - 바다의 기운</h3>
+                <p>임수(壬水)는 끝없이 넓고 깊은 바다나 유유히 흐르는 큰 강의 기운을 상징합니다. 이 기운을 가진 사람은 스케일이 크고 생각이 자유로우며, 어디에도 얽매이지 않으려는 성향이
+                    있습니다. 창의력과 아이디어가 넘치고 새로운 것에 대한 호기심이 강하죠. 하지만 마무리가 약하고 한 곳에 집중하기 어려워 일을 끝까지 해내지 못할 때가 있습니다. 임수인은 속을
+                    알기 어려운 신비로운 매력이 있어 사람들을 끌어당깁니다.</p>
+            </article>
+            <article class="enc-card">
+                <h3><span>癸</span> 계수 - 이슬과 빗물의 기운</h3>
+                <p>계수(癸水)는 조용히 내리는 빗물이나 아침 이슬처럼 섬세하고 고요한 물의 기운을 상징합니다. 임수가 바다라면 계수는 스며드는 지하수처럼 겉으로 드러나지 않는 깊은 내면을 지녔습니다.
+                    이 기운을 가진 사람은 상상력이 풍부하고 감성적이며, 혼자만의 세계에서 많은 시간을 보냅니다. 뛰어난 통찰력과 직관력이 있지만 실행력이 부족해 생각만 하다 끝나는 경우가 많습니다.
+                    계수인은 조용하지만 본인만의 철학과 세계관이 확고합니다.</p>
+            </article>
+        </section>
+    </div>
+    <script>
+        const KAKAO_API_KEY = '14302bcc718209aaa470793e426fbb2a';
+        if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) Kakao.init(KAKAO_API_KEY);
+        const P = {
+            '甲': { mbti: 'ESTJ/ENTJ', base: "남 밑에선 죽어도 일 못 함. 본인이 다 맞다고 생각함. 똥고집 부리다가 망해도 '역시 내 탓이 아님' 시전. 근데 리더십은 있어서 다들 욕하면서 따라감.", love: "연애에서도 내가 리드해야 직성이 풀림. 데이트 코스? 당연히 내가 정함. 상대방 의견? '응 그래 근데 여기 가자'. 밀당 같은 거 안 함. 대신 본인도 엄청 퍼줌.", money: "돈 벌 줄은 아는데 쓸 줄도 앎. 큰 그림 그리다가 세금 폭탄 맞기도 함. 투자? 본인 판단 믿고 올인하는 타입. 성공하면 천재, 실패하면 빚더미.", work: "본인이 팀장 아니면 불만 터짐. 상사 밑에서 '예예' 하는 거 체질적으로 못함. 어차피 사업하거나 최소 임원 해야 함.", advice: "고집 좀 그만 부리세요. 남 말도 가끔 맞습니다." },
+            '乙': { mbti: 'ESFP/ENFP', base: "어디 던져도 살아남음. 강한 놈한텐 찰싹, 약한 놈한텐 쿨함. 멘탈 갈대긴 한데 뿌리가 콘크리트. 절대 안 죽음. 생존왕임.", love: "눈치로 밀당함. 상대방 반응 보면서 적절히 밀고 당기는데, 가끔 너무 눈치 봐서 지침. '뭐 먹고 싶어?' '아무거나~' 이러다 진짜 아무거나 시켜주면 삐침.", money: "실속파임. 티 안 나게 알뜰하게 모음. 세일이다 싶으면 일단 사재기. 근데 가끔 가성비에 눈 멀어서 필요 없는 것도 삼.", work: "적응력 甲. 어디서든 분위기 파악 빠름. 다만 승진 경쟁에선 밀릴 수 있음. 가끔 의견 좀 내세요.", advice: "여기저기 붙는 것도 능력인데 박쥐짓은 적당히." },
+            '丙': { mbti: 'ESFJ/ENFJ', base: "본인이 주인공 아니면 병 남. 칭찬하면 간 쓸개 빼줌. 오지랖 태평양. 근데 돌아서면 까먹음. 단순함 끝판왕.", love: "좋아하면 온 세상에 광고함. SNS에 럽스타 폭격. 질투도 화끈함. 관심 안 주면 '나 싫어해?' 집착 모드 돌입.", money: "번 만큼 씀. 통장이 롤러코스터. 허세 지출 많음. 남 보기 좋은 곳에 돈 씀. 카드값 폭탄 주의.", work: "발표, PT 체질임. 무대에서 빛남. 다만 팩트체크 안 하고 분위기로 가다가 털림. 디테일 좀 챙기세요.", advice: "남 신경 끌 시간에 본인 앞가림부터." },
+            '丁': { mbti: 'INFJ/ISFJ', base: "겉은 천사, 속은 데스노트. 한번 삐지면 10년 뒤에 복수함. 새벽 감성 글 올리고 아침에 이불 킥.", love: "겉쿨속따. 표현 안 하는데 속으론 24시간 생각 중. 헌신형이라 퍼주는데 정작 표현 못해서 손해봄.", money: "꼼꼼히 모으는 스타일. 가계부 쓰고 예산 짬. 근데 좋아하는 사람한텐 지갑이 열림. 선물 폭탄.", work: "묵묵히 일하는데 티를 안 내서 공로 뺏김. 셀프 PR 좀 하세요. 가만히 있으면 아무도 몰라요.", advice: "혼자 소설 쓰지 말고 말로 하세요." },
+            '戊': { mbti: 'ISTJ/ISTP', base: "속을 알 수 없음. 좋은지 싫은지 말 안 함. 그냥 있음. 고집 전교 1등. 건드리면 산사태.", love: "안정적 연애 추구. 한번 사귀면 오래감. 근데 변화가 없어서 상대방 지루해함. 이벤트 좀 해요.", money: "안전한 재테크. 부동산, 적금 좋아함. 리스크 싫어함. 근데 좋은 기회도 귀찮아서 놓침.", work: "조직의 버팀목. 신뢰감 있음. 다만 변화에 느려서 뒤처질 수 있음. 새로운 거 배우세요.", advice: "표현 안 하면 아무도 몰라요. 말 좀 하세요." },
+            '己': { mbti: 'ISFJ/ISFP', base: "착한 척하는데 계산기 최강. 내 사람한텐 퍼주고 남이면 국물도 없음. 답정너.", love: "연애도 계산적. 손해 볼 연애 안 함. 근데 한번 진심 주면 올인. 그 진심까지 오래 걸림.", money: "돈 관리 신. 노후대비 완벽. 20대부터 연금 듦. 근데 너무 아껴서 인색해 보일 수 있음.", work: "실무 능력 좋음. 불필요한 일 안 함. 다만 티 안 내서 인정 못 받음. 어필하세요.", advice: "착한 척 적당히. 계산기 소리 다 들려요." },
+            '庚': { mbti: 'ESTP/ENTP', base: "입만 열면 팩폭. '살쪘어?'를 '건강 걱정돼서'로 포장. 뒤끝은 없는데 앞끝이 쩔어서 멘탈 가루 만듦.", love: "직진형. 좋으면 바로 고백. 밀당 없음. 근데 연애 중에도 직설적이라 상처 줌. 필터링 좀.", money: "한방 스타일. 크게 벌거나 크게 잃거나. 손절 타이밍 못 잡아서 고집 부리다 더 잃음.", work: "추진력 甲. 근데 상사랑 충돌 많음. 본인이 대장 해야 스트레스 안 받음. 창업 고려하세요.", advice: "그 입 좀 다무세요. 팩트가 다 정의는 아닙니다." },
+            '辛': { mbti: 'INTJ/INTP', base: "자기애 최강. 내가 제일 소중. 남이 건드리면 극혐. 칼날 같은 말투. 깔끔 떠는데 방은 더러움.", love: "이상형 기준 높음. 아무나 안 만남. 한번 빠지면 집착. 모든 것 체크함. 믿음 가지세요.", money: "꼼꼼 재테크. 포트폴리오 잘 짬. 근데 명품 좋아해서 자존심 소비도 있음.", work: "디테일 장인. 완성도 높음. 근데 완벽주의라 스트레스. 남 일에 간섭 말고 본인 일만.", advice: "남 지적 전에 거울부터. 님도 완벽 아님." },
+            '壬': { mbti: 'ENTP/ENFP', base: "머리 회전 빠름. 근데 잔머리. 스케일 크게 노는데 마무리 안 됨. 속을 모르겠는 음흉함이 매력.", love: "자유로운 연애. 구속하면 도망감. 썸만 100개. 진심 꽂히면 로맨틱한데 그게 언제일지 모름.", money: "스케일 큰 투자 좋아함. 근데 허황된 것도 많음. 친구 사업 투자하다 날리기도. 현실적으로.", work: "아이디어맨. 기획 기가 막힘. 근데 실행력 부족. 실행력 있는 파트너 찾으세요.", advice: "잔머리 굴리다 자기 꾀에 넘어갑니다." },
+            '癸': { mbti: 'INFP', base: "망상으로 우주 정복. 실행력 제로. 감정 롤러코스터. 근데 아이디어는 미침. 천재성.", love: "머릿속으론 로맨틱 극치. 현실은 아무것도 안 함. 상상 속에서 연애하고 이별함. 움직이세요.", money: "전략은 잘 짜는데 실행 안 함. '이번 달부터 적금'하고 6개월째. 자동이체 걸어놓으세요.", work: "브레인스토밍 빛남. 근데 그 다음이 없음. 누가 끌어줘야 빛나는 타입.", advice: "생각 그만하고 일단 시작하세요." }
+        };
+        const Q = { today: ['점심 아무거나 금지', '모르는 사람한테 인사', 'SNS 1시간 금지'], week: ['미뤄둔 일 하나 끝내기', '안 가본 장소 가기'], year: ['버킷리스트 3개 쓰기', '새 취미 시작'] };
+        const E = { WOOD: { img: 'images/Wood.png', c: '#4ade80' }, FIRE: { img: 'images/Fire.png', c: '#f87171' }, EARTH: { img: 'images/Earth.png', c: '#fbbf24' }, METAL: { img: 'images/Metal.png', c: '#e2e8f0' }, WATER: { img: 'images/Water.png', c: '#60a5fa' } };
+        const EM = { '甲': 'WOOD', '乙': 'WOOD', '丙': 'FIRE', '丁': 'FIRE', '戊': 'EARTH', '己': 'EARTH', '庚': 'METAL', '辛': 'METAL', '壬': 'WATER', '癸': 'WATER', '寅': 'WOOD', '卯': 'WOOD', '巳': 'FIRE', '午': 'FIRE', '辰': 'EARTH', '戌': 'EARTH', '丑': 'EARTH', '未': 'EARTH', '申': 'METAL', '酉': 'METAL', '亥': 'WATER', '子': 'WATER' };
+        const LK = { WOOD: { c: '🌿 그린/민트', i: '식물, 동쪽 산책' }, FIRE: { c: '🔴 레드/퍼플', i: '캔들, 햇빛' }, EARTH: { c: '🟡 옐로우', i: '도자기' }, METAL: { c: '⚪ 화이트/실버', i: '쥬얼리' }, WATER: { c: '🔵 블랙/네이비', i: '물 많이 마시기' } };
+        let uName = '', fType = 'today', curDm = '', curPd = null, curTheme = 'base';
+        const trailCanvas = document.getElementById('trailCanvas'), tCtx = trailCanvas.getContext('2d'); let particles = [];
+        function resizeTrail() { trailCanvas.width = innerWidth; trailCanvas.height = innerHeight } resizeTrail(); addEventListener('resize', resizeTrail);
+        class Particle { constructor(x, y, b = false) { this.x = x; this.y = y; this.size = b ? Math.random() * 6 + 3 : Math.random() * 4 + 2; this.color = ['#00FFFF', '#E0B0FF', '#FFFFFF'][Math.floor(Math.random() * 3)]; this.alpha = 1; this.decay = b ? .03 : .02; const a = Math.random() * Math.PI * 2, s = b ? Math.random() * 4 + 2 : Math.random() + .5; this.vx = Math.cos(a) * s; this.vy = Math.sin(a) * s } update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; this.size *= .96 } draw() { tCtx.save(); tCtx.globalAlpha = this.alpha; tCtx.fillStyle = this.color; tCtx.shadowBlur = 15; tCtx.shadowColor = this.color; tCtx.beginPath(); tCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); tCtx.fill(); tCtx.restore() } isAlive() { return this.alpha > 0 } }
+        function animateTrail() { tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height); particles = particles.filter(p => p.isAlive()); particles.forEach(p => { p.update(); p.draw() }); requestAnimationFrame(animateTrail) } animateTrail();
+        let lastT = 0; document.addEventListener('mousemove', e => { const n = Date.now(); if (n - lastT > 30) { for (let i = 0; i < 3; i++)particles.push(new Particle(e.clientX, e.clientY)); lastT = n } });
+        document.addEventListener('touchstart', e => { const t = e.touches[0]; for (let i = 0; i < 15; i++)particles.push(new Particle(t.clientX, t.clientY, true)) });
+        document.querySelectorAll('.fortune-sel button').forEach(b => b.onclick = () => { document.querySelectorAll('.fortune-sel button').forEach(x => x.classList.remove('on')); b.classList.add('on'); fType = b.dataset.t });
+        document.querySelectorAll('.tab-row button').forEach(b => b.onclick = () => { document.querySelectorAll('.tab-row button').forEach(x => x.classList.remove('on')); document.querySelectorAll('.tab-c').forEach(x => x.classList.remove('on')); b.classList.add('on'); document.getElementById('tab-' + b.dataset.tab).classList.add('on') });
+        document.querySelectorAll('.theme-tabs button').forEach(b => b.onclick = () => { document.querySelectorAll('.theme-tabs button').forEach(x => x.classList.remove('on')); b.classList.add('on'); curTheme = b.dataset.th; updateTheme() });
+        const yS = document.getElementById('selYear'), mS = document.getElementById('selMonth'), dS = document.getElementById('selDay'), hS = document.getElementById('selHour'), minS = document.getElementById('selMinute');
+        for (let y = new Date().getFullYear(); y >= 1920; y--)yS.innerHTML += `<option value="${y}">${y}</option>`;
+        for (let m = 1; m <= 12; m++)mS.innerHTML += `<option value="${m}">${m}월</option>`;
+        for (let d = 1; d <= 31; d++)dS.innerHTML += `<option value="${d}">${d}</option>`;
+        for (let h = 1; h <= 12; h++)hS.innerHTML += `<option value="${h}">${h}시</option>`;
+        for (let m = 0; m < 60; m++)minS.innerHTML += `<option value="${m}">${String(m).padStart(2, '0')}분</option>`;
+        document.getElementById('unknownTime').onchange = e => { const t = document.getElementById('timeInputs'); t.style.opacity = e.target.checked ? '.4' : '1'; t.style.pointerEvents = e.target.checked ? 'none' : 'auto' };
+        function updateTheme() { if (!curPd) return; const k = { base: 'base', love: 'love', money: 'money', work: 'work' }; document.getElementById('storyBox').innerText = curPd[k[curTheme]] || curPd.base; document.getElementById('adviceTxt').innerText = curPd.advice }
+        function analyze() { uName = document.getElementById('userName').value.trim() || '익명'; let y, mo, d, h, mi; const tab = document.querySelector('.tab-row button.on').dataset.tab; if (tab === 'quick') { const v = document.getElementById('quickDate').value.trim(); if (!/^\d{8}$/.test(v)) { alert('8자리 숫자로 입력!'); return } y = +v.slice(0, 4); mo = +v.slice(4, 6); d = +v.slice(6, 8) } else { y = +yS.value; mo = +mS.value; d = +dS.value } if (mo < 1 || mo > 12 || d < 1 || d > 31) { alert('날짜 확인!'); return } if (document.getElementById('unknownTime').checked) { h = 12; mi = 0 } else { const ap = document.getElementById('selAmpm').value; let hh = +hS.value; mi = +minS.value; if (ap === 'PM' && hh !== 12) hh += 12; if (ap === 'AM' && hh === 12) hh = 0; h = hh } document.getElementById('inputSection').style.display = 'none'; document.getElementById('loading').style.display = 'flex'; setTimeout(() => { try { calc(y, mo, d, h, mi) } catch (e) { console.error(e); alert('오류!'); location.reload() } finally { document.getElementById('loading').style.display = 'none' } }, 2e3) }
+        function calc(y, mo, d, h, mi) { const s = Solar.fromYmdHms(y, mo, d, h, mi, 0), l = s.getLunar(), bz = l.getEightChar(); const p = [bz.getYearGan().toString(), bz.getYearZhi().toString(), bz.getMonthGan().toString(), bz.getMonthZhi().toString(), bz.getDayGan().toString(), bz.getDayZhi().toString(), bz.getTimeGan().toString(), bz.getTimeZhi().toString()]; const cnt = { WOOD: 0, FIRE: 0, EARTH: 0, METAL: 0, WATER: 0 }; p.forEach(c => { const e = EM[c]; if (e) cnt[e]++ }); curDm = bz.getDayGan().toString(); curPd = P[curDm] || P['甲']; let mn = 9, wk = 'WATER'; for (const [k, v] of Object.entries(cnt)) if (v < mn) { mn = v; wk = k } document.getElementById('result').style.display = 'block';['n1', 'n2', 'n3'].forEach(id => document.getElementById(id).innerText = uName); document.getElementById('soulC').innerText = curDm; document.getElementById('soulT').innerText = curPd.mbti; document.getElementById('mbtiBadge').innerText = curPd.mbti; curTheme = 'base'; document.querySelectorAll('.theme-tabs button').forEach((b, i) => b.classList.toggle('on', i === 0)); updateTheme(); const ch = document.getElementById('statChart'); ch.innerHTML = '';['WOOD', 'FIRE', 'EARTH', 'METAL', 'WATER'].forEach(k => { const e = E[k], c = cnt[k], pc = (c / 8) * 100; ch.innerHTML += `<div class="stat-row"><img src="${e.img}" alt=""><div class="stat-track"><div class="stat-fill" style="background:${e.c}" data-w="${pc}%"></div></div><span class="stat-n">${c}</span></div>` }); setTimeout(() => document.querySelectorAll('.stat-fill').forEach(b => b.style.width = b.dataset.w), 100); const lk = LK[wk], le = E[wk]; document.getElementById('luckBox').innerHTML = `<div class="luck-dot" style="background:${le.c};color:${le.c}"></div><div class="luck-info"><strong>${lk.c}</strong><span>${lk.i}</span></div>`; const qa = Q[fType]; document.getElementById('questTxt').innerText = qa[Math.floor(Math.random() * qa.length)] }
+        function shareKakao() { if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) { alert('카카오 SDK 초기화 필요'); return } Kakao.Share.sendDefault({ objectType: 'feed', content: { title: `${uName}님의 영혼 캐릭터는 [${curDm}]!`, description: curPd ? curPd.mbti + ' - ' + curPd.base.slice(0, 40) + '...' : '사주 분석 해보세요!', imageUrl: 'https://i.imgur.com/XQQ5jmD.png', link: { mobileWebUrl: location.href, webUrl: location.href } }, buttons: [{ title: '내 운명 확인하기', link: { mobileWebUrl: location.href, webUrl: location.href } }] }) }
+    </script>
+</body>
+
+</html>
