@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="MZ세대를 위한 팩폭 사주 분석 - 천간 오행으로 알아보는 내 성격, 연애운, 재물운, 사회운">
-    <meta name="keywords" content="사주, 운세, MBTI, 천간, 오행, 연애운, 재물운, 무료운세">
-    <title>🌙 점술가 The Moon - MZ세대 팩폭 사주</title>
+    <title>점술가 The Moon - 사주로 보는 나의 영혼 캐릭터 (MBTI)</title>
+    <meta name="description"
+        content="2026년 병오년 무료 신년운세, 사주팔자, 만세력 기반의 성격 분석. 나의 타고난 기질과 MBTI를 비교해보세요. 오늘, 이번주, 올해의 운세를 무료로 제공합니다.">
+    <meta name="keywords" content="사주, 무료사주, 만세력, 신년운세, 2026년운세, MBTI, 성격테스트, 사주MBTI, 궁합">
+    <meta property="og:title" content="점술가 The Moon - 사주로 보는 영혼 캐릭터">
+    <meta property="og:description" content="소름 돋는 사주 분석! 내 영혼의 MBTI는 무엇일까? 지금 바로 확인하세요.">
+    <meta property="og:image" content="images/Fire.png">
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <style>
         :root {
             --bg: #0f172a;
@@ -520,6 +524,352 @@
             font-size: .85rem;
             line-height: 1.8
         }
+
+        .pillars {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0
+        }
+
+        .pillar {
+            text-align: center;
+            min-width: 60px
+        }
+
+        .pillar-label {
+            font-size: .7rem;
+            color: var(--txt2);
+            margin-bottom: 6px;
+            display: block
+        }
+
+        .stem,
+        .branch {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-radius: 8px;
+            margin: 0 auto 4px
+        }
+
+        .saju-msg {
+            text-align: center;
+            color: var(--cyan);
+            font-size: .85rem;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(0, 245, 212, .1);
+            border-radius: 8px
+        }
+
+        .chemistry-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .chemistry-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 12px
+        }
+
+        .chemistry-item.best {
+            background: linear-gradient(135deg, rgba(0, 245, 212, .15), rgba(96, 165, 250, .15));
+            border: 1px solid var(--cyan)
+        }
+
+        .chemistry-item.worst {
+            background: linear-gradient(135deg, rgba(239, 68, 68, .15), rgba(168, 85, 247, .15));
+            border: 1px solid var(--pink)
+        }
+
+        .chemistry-item .emoji {
+            font-size: 1.8rem
+        }
+
+        .chemistry-info strong {
+            display: block;
+            font-size: .85rem;
+            margin-bottom: 4px
+        }
+
+        .chemistry-item.best strong {
+            color: var(--cyan)
+        }
+
+        .chemistry-item.worst strong {
+            color: var(--pink)
+        }
+
+        .chemistry-info p {
+            color: var(--txt2);
+            font-size: .8rem;
+            margin: 0
+        }
+
+        /* MBTI Test Modal */
+        #mbtiModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .mbti-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .mbti-close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--txt2);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .mbti-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .mbti-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .q-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: #fff;
+        }
+
+        .opt-btn {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--txt);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .opt-btn:hover,
+        .opt-btn:active {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: var(--accent);
+        }
+
+        /* Action Buttons Layout */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .submit {
+            flex: 1;
+            margin-top: 0;
+            /* Let flex container handle spacing */
+        }
+
+        .mbti-start-btn {
+            flex: 1;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* MBTI Result Modal */
+        #mbtiResultModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 10000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .mbti-res-card {
+            background: var(--glass);
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .res-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .res-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyan), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+        }
+
+        .res-desc {
+            color: var(--txt);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 14px;
+            border-radius: 12px;
+        }
+
+        .res-compare {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+            font-size: 0.9rem;
+            color: var(--txt2);
+        }
+
+        /* MBTI Mini Popup */
+        .mini-popup {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--cyan);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 -5px 20px rgba(0, 245, 212, 0.3);
+            z-index: 990;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .mini-popup.show {
+            bottom: 20px;
+        }
+
+        .mini-btn {
+            background: var(--cyan);
+            color: #0f172a;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .mini-close {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--txt2);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -529,6 +879,33 @@
     </video>
     <div id="overlay"></div>
     <canvas id="trailCanvas"></canvas>
+
+    <!-- MBTI Test Modal -->
+    <div id="mbtiModal">
+        <div class="wrap" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+            <div class="mbti-header">
+                <h2>🧩 성격 유형 테스트</h2>
+                <button class="mbti-close-btn" onclick="closeMbtiTest()">✕</button>
+                <div class="mbti-progress">
+                    <div class="mbti-bar" id="mbtiBar"></div>
+                </div>
+                <p id="qNum" style="color:var(--txt2); font-size:0.8rem; margin-top:8px">1 / 12</p>
+            </div>
+            <div id="qBox"></div>
+        </div>
+    </div>
+
+    <!-- MBTI Result Modal -->
+    <div id="mbtiResultModal">
+        <div class="mbti-res-card">
+            <div class="res-badge">당신의 진짜 성격은?</div>
+            <div class="res-title" id="resMbtiTitle">INFP</div>
+            <div class="res-desc" id="resMbtiDesc"></div>
+            <div class="res-compare" id="resCompareTxt"></div>
+            <button class="submit" onclick="closeMbtiResult()">확인</button>
+        </div>
+    </div>
+
     <div class="wrap">
         <div id="inputSection" class="card">
             <h1>🌙 점술가 The Moon</h1>
@@ -561,19 +938,37 @@
                 <div class="chk-row"><input type="checkbox" id="unknownTime"><label for="unknownTime">시간 모름</label>
                 </div>
             </div>
-            <button class="submit" onclick="analyze()">🔮 내 운명 까발리기</button>
+            <div class="action-buttons">
+                <button class="submit" onclick="analyze()">🔮 내 운명 까발리기</button>
+                <button class="mbti-start-btn" onclick="startMbtiTest()">🧩 내 '진짜' MBTI 검사하기</button>
+            </div>
         </div>
         <div id="loading">
             <div class="ld"></div>
             <p style="margin-top:14px;color:var(--cyan)">천기누설 중... 🤫</p>
         </div>
         <div id="result">
+            <div class="card" id="manseCard">
+                <div class="sec-title" style="justify-content:center">📜 <span class="nm" id="n0">OOO</span>님의 사주 팔자
+                </div>
+                <div class="pillars" id="pillarsBox"></div>
+                <div class="saju-msg" id="sajuMsg"></div>
+            </div>
             <div class="card hero">
                 <div class="sec-title" style="justify-content:center">✨ <span class="nm" id="n1">OOO</span>님의 영혼 캐릭터
                 </div>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;">
+                    <div
+                        style="flex:1; background:rgba(0,0,0,0.3); padding:20px; border-radius:16px; text-align:center;">
+                        <span style="font-size:0.9rem; color:var(--txt2); display:block; margin-bottom:8px;">타고난 운명
+                            (사주)</span>
+                        <div id="sajuMbti"
+                            style="font-size:2.5rem; font-weight:800; color:var(--pink); line-height:1.2;"></div>
+                    </div>
+                </div>
+
                 <div id="soulC" class="soul-c"></div>
                 <div id="soulT" class="soul-t"></div>
-                <div id="mbtiBadge" class="mbti-badge"></div>
                 <div id="genderBadge" style="font-size:.8rem;color:var(--txt2);margin-top:4px"></div>
             </div>
             <div class="card">
@@ -596,6 +991,25 @@
                 <div class="quest-box">
                     <div class="quest-t">🎯 오늘의 퀘스트</div>
                     <p id="questTxt"></p>
+                </div>
+            </div>
+            <div class="card" id="chemistryCard">
+                <div class="sec-title" style="justify-content:center">💫 영혼의 단짝 & 피해야 할 악연</div>
+                <div class="chemistry-content">
+                    <div class="chemistry-item best">
+                        <span class="emoji">✨</span>
+                        <div class="chemistry-info">
+                            <strong>당신에게 힘이 되어주는 귀인</strong>
+                            <p id="bestMatch"></p>
+                        </div>
+                    </div>
+                    <div class="chemistry-item worst">
+                        <span class="emoji">⚡</span>
+                        <div class="chemistry-info">
+                            <strong>만나면 기 빨리는 스타일</strong>
+                            <p id="worstMatch"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="btn-row"><button class="reset" onclick="location.reload()">🔄 다시하기</button><button
@@ -665,34 +1079,134 @@
                     계수인은 조용하지만 본인만의 철학과 세계관이 확고합니다.</p>
             </article>
         </section>
+
+        <!-- AdSense Content Section -->
+        <section class="content-article"
+            style="margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 16px; text-align: left; color: #cbd5e1; line-height: 1.7;">
+            <h2
+                style="color: var(--cyan); margin-bottom: 16px; border-bottom: 2px solid var(--cyan); display: inline-block; padding-bottom: 4px;">
+                🔮 사주와 MBTI의 만남</h2>
+            <p>사주팔자(Four Pillars of Destiny)는 단순한 미신이 아닌, 수천 년간 데이터를 축적해 온 동양의 통계학입니다. 우리가 태어난 연, 월, 일, 시의 네 기둥(Four
+                Pillars)이 우주의 어떤 기운을 받고 태어났는지를 분석하는 학문이죠. 반면 MBTI는 서양 심리학의 결정체로, 현재 나의 성격 유형을 파악하는 도구입니다.</p>
+            <br>
+            <h3>🌟 일간(Day Stem)이란 무엇인가요?</h3>
+            <p>'일간'은 사주에서 '나 자신'을 상징하는 가장 중요한 글자입니다. 마치 MBTI의 첫 글자(E/I)처럼 나의 근본적인 에너지와 기질을 결정합니다. 갑목(甲), 을목(乙), 병화(丙) 등
+                10개의 천간(Ten Heavenly Stems) 중 하나로 결정되며, 이 사이트에서는 당신의 일간을 분석하여 '영혼 캐릭터'를 알려드립니다.</p>
+            <br>
+            <h3>⚖️ 2026년 병오년(丙午년)의 운세</h3>
+            <p>2026년은 '붉은 말의 해'인 병오년입니다. 병화(丙火)의 강력한 태양 에너지와 오화(午火)의 뜨거운 열정이 만나는 해로, 변화와 혁신이 일어나는 시기입니다. 당신의 사주 오행이 이
+                뜨거운 불의 기운과 만났을 때 어떤 화학 반응이 일어날까요? '점술가 The Moon'에서는 만세력 원리를 기반으로 당신의 올해 운세를 정확하게 예측해 드립니다.</p>
+        </section>
+
+        <footer
+            style="margin-top: 60px; padding-bottom: 40px; text-align: center; color: var(--txt2); font-size: 0.8rem;">
+            <p>&copy; 2026 점술가 The Moon. All rights reserved.</p>
+            <div style="margin-top: 10px;">
+                <span style="cursor: pointer; text-decoration: underline;"
+                    onclick="document.getElementById('privacyModal').style.display='flex'">개인정보처리방침</span> |
+                <a href="mailto:contact@example.com" style="color: var(--txt2); text-decoration: none;">문의하기</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.7rem; opacity: 0.6;">본 서비스는 과학적 근거에 기반한 엔터테인먼트 목적으로 제공되며, 맹신은
+                금물입니다.</p>
+        </footer>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal-overlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center;">
+        <div
+            style="background:var(--bg); padding:24px; border-radius:16px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto; border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="margin:0; color:var(--cyan);">🔒 개인정보처리방침</h3>
+                <button onclick="document.getElementById('privacyModal').style.display='none'"
+                    style="background:none; border:none; color:var(--txt2); font-size:1.5rem; cursor:pointer;">✕</button>
+            </div>
+            <div style="font-size:0.85rem; color:#cbd5e1; line-height:1.6; text-align:left;">
+                <p><strong>1. 수집하는 개인정보 항목</strong><br>본 서비스는 별도의 회원가입 없이 이용 가능하며, 서비스 제공을 위해 입력하신 생년월일, 성별 등의 정보는 결과 분석
+                    용도로만 사용됩니다. 서버에 저장되지 않고 브라우저 내에서만 처리됩니다.</p>
+                <br>
+                <p><strong>2. 개인정보의 처리 목적</strong><br>입력하신 정보는 사주 명식 산출 및 운세 결과 제공을 위해서만 활용됩니다.</p>
+                <br>
+                <p><strong>3. 쿠키(Cookie)의 운용</strong><br>사용자 편의를 위해 쿠키를 사용할 수 있으며, 이는 브라우저 설정에서 거부할 수 있습니다.</p>
+                <br>
+                <p><strong>4. 광고 게재</strong><br>본 사이트는 Google AdSense 광고를 포함하고 있으며, Google은 사용자 관심 기반 광고를 위해 쿠키를 사용할 수
+                    있습니다.</p>
+            </div>
+        </div>
+    </div>
+    <!-- MBTI Mini Popup -->
+    <div id="mbtiMiniPopup" class="mini-popup">
+        <button class="mini-close" onclick="this.parentElement.classList.remove('show')">✕</button>
+        <span style="font-size:1.5rem">🤔</span>
+        <div style="flex:1">
+            <div style="color:var(--cyan); font-weight:700; font-size:0.9rem">현실의 나는 어떨까?</div>
+            <div style="color:var(--txt2); font-size:0.8rem">1분컷 MBTI 테스트 하기</div>
+        </div>
+        <button class="mini-btn" onclick="startMbtiTest(); this.parentElement.classList.remove('show')">GO</button>
     </div>
     <script>
         const KAKAO_API_KEY = '14302bcc718209aaa470793e426fbb2a';
         if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) Kakao.init(KAKAO_API_KEY);
         const P = {
-            '甲': { mbti: 'ESTJ/ENTJ', base: "남 밑에선 죽어도 일 못 함. 본인이 다 맞다고 생각함. 똥고집 부리다가 망해도 '역시 내 탓이 아님' 시전. 근데 리더십은 있어서 다들 욕하면서 따라감.", love: "연애에서도 내가 리드해야 직성이 풀림. 데이트 코스? 당연히 내가 정함. 상대방 의견? '응 그래 근데 여기 가자'. 밀당 같은 거 안 함. 대신 본인도 엄청 퍼줌.", money: "돈 벌 줄은 아는데 쓸 줄도 앎. 큰 그림 그리다가 세금 폭탄 맞기도 함. 투자? 본인 판단 믿고 올인하는 타입. 성공하면 천재, 실패하면 빚더미.", work: "본인이 팀장 아니면 불만 터짐. 상사 밑에서 '예예' 하는 거 체질적으로 못함. 어차피 사업하거나 최소 임원 해야 함.", advice: "고집 좀 그만 부리세요. 남 말도 가끔 맞습니다." },
-            '乙': { mbti: 'ESFP/ENFP', base: "어디 던져도 살아남음. 강한 놈한텐 찰싹, 약한 놈한텐 쿨함. 멘탈 갈대긴 한데 뿌리가 콘크리트. 절대 안 죽음. 생존왕임.", love: "눈치로 밀당함. 상대방 반응 보면서 적절히 밀고 당기는데, 가끔 너무 눈치 봐서 지침. '뭐 먹고 싶어?' '아무거나~' 이러다 진짜 아무거나 시켜주면 삐침.", money: "실속파임. 티 안 나게 알뜰하게 모음. 세일이다 싶으면 일단 사재기. 근데 가끔 가성비에 눈 멀어서 필요 없는 것도 삼.", work: "적응력 甲. 어디서든 분위기 파악 빠름. 다만 승진 경쟁에선 밀릴 수 있음. 가끔 의견 좀 내세요.", advice: "여기저기 붙는 것도 능력인데 박쥐짓은 적당히." },
-            '丙': { mbti: 'ESFJ/ENFJ', base: "본인이 주인공 아니면 병 남. 칭찬하면 간 쓸개 빼줌. 오지랖 태평양. 근데 돌아서면 까먹음. 단순함 끝판왕.", love: "좋아하면 온 세상에 광고함. SNS에 럽스타 폭격. 질투도 화끈함. 관심 안 주면 '나 싫어해?' 집착 모드 돌입.", money: "번 만큼 씀. 통장이 롤러코스터. 허세 지출 많음. 남 보기 좋은 곳에 돈 씀. 카드값 폭탄 주의.", work: "발표, PT 체질임. 무대에서 빛남. 다만 팩트체크 안 하고 분위기로 가다가 털림. 디테일 좀 챙기세요.", advice: "남 신경 끌 시간에 본인 앞가림부터." },
-            '丁': { mbti: 'INFJ/ISFJ', base: "겉은 천사, 속은 데스노트. 한번 삐지면 10년 뒤에 복수함. 새벽 감성 글 올리고 아침에 이불 킥.", love: "겉쿨속따. 표현 안 하는데 속으론 24시간 생각 중. 헌신형이라 퍼주는데 정작 표현 못해서 손해봄.", money: "꼼꼼히 모으는 스타일. 가계부 쓰고 예산 짬. 근데 좋아하는 사람한텐 지갑이 열림. 선물 폭탄.", work: "묵묵히 일하는데 티를 안 내서 공로 뺏김. 셀프 PR 좀 하세요. 가만히 있으면 아무도 몰라요.", advice: "혼자 소설 쓰지 말고 말로 하세요." },
-            '戊': { mbti: 'ISTJ/ISTP', base: "속을 알 수 없음. 좋은지 싫은지 말 안 함. 그냥 있음. 고집 전교 1등. 건드리면 산사태.", love: "안정적 연애 추구. 한번 사귀면 오래감. 근데 변화가 없어서 상대방 지루해함. 이벤트 좀 해요.", money: "안전한 재테크. 부동산, 적금 좋아함. 리스크 싫어함. 근데 좋은 기회도 귀찮아서 놓침.", work: "조직의 버팀목. 신뢰감 있음. 다만 변화에 느려서 뒤처질 수 있음. 새로운 거 배우세요.", advice: "표현 안 하면 아무도 몰라요. 말 좀 하세요." },
-            '己': { mbti: 'ISFJ/ISFP', base: "착한 척하는데 계산기 최강. 내 사람한텐 퍼주고 남이면 국물도 없음. 답정너.", love: "연애도 계산적. 손해 볼 연애 안 함. 근데 한번 진심 주면 올인. 그 진심까지 오래 걸림.", money: "돈 관리 신. 노후대비 완벽. 20대부터 연금 듦. 근데 너무 아껴서 인색해 보일 수 있음.", work: "실무 능력 좋음. 불필요한 일 안 함. 다만 티 안 내서 인정 못 받음. 어필하세요.", advice: "착한 척 적당히. 계산기 소리 다 들려요." },
-            '庚': { mbti: 'ESTP/ENTP', base: "입만 열면 팩폭. '살쪘어?'를 '건강 걱정돼서'로 포장. 뒤끝은 없는데 앞끝이 쩔어서 멘탈 가루 만듦.", love: "직진형. 좋으면 바로 고백. 밀당 없음. 근데 연애 중에도 직설적이라 상처 줌. 필터링 좀.", money: "한방 스타일. 크게 벌거나 크게 잃거나. 손절 타이밍 못 잡아서 고집 부리다 더 잃음.", work: "추진력 甲. 근데 상사랑 충돌 많음. 본인이 대장 해야 스트레스 안 받음. 창업 고려하세요.", advice: "그 입 좀 다무세요. 팩트가 다 정의는 아닙니다." },
-            '辛': { mbti: 'INTJ/INTP', base: "자기애 최강. 내가 제일 소중. 남이 건드리면 극혐. 칼날 같은 말투. 깔끔 떠는데 방은 더러움.", love: "이상형 기준 높음. 아무나 안 만남. 한번 빠지면 집착. 모든 것 체크함. 믿음 가지세요.", money: "꼼꼼 재테크. 포트폴리오 잘 짬. 근데 명품 좋아해서 자존심 소비도 있음.", work: "디테일 장인. 완성도 높음. 근데 완벽주의라 스트레스. 남 일에 간섭 말고 본인 일만.", advice: "남 지적 전에 거울부터. 님도 완벽 아님." },
-            '壬': { mbti: 'ENTP/ENFP', base: "머리 회전 빠름. 근데 잔머리. 스케일 크게 노는데 마무리 안 됨. 속을 모르겠는 음흉함이 매력.", love: "자유로운 연애. 구속하면 도망감. 썸만 100개. 진심 꽂히면 로맨틱한데 그게 언제일지 모름.", money: "스케일 큰 투자 좋아함. 근데 허황된 것도 많음. 친구 사업 투자하다 날리기도. 현실적으로.", work: "아이디어맨. 기획 기가 막힘. 근데 실행력 부족. 실행력 있는 파트너 찾으세요.", advice: "잔머리 굴리다 자기 꾀에 넘어갑니다." },
+            '甲': { mbti: 'ENTJ', base: "남 밑에선 죽어도 일 못 함. 본인이 다 맞다고 생각함. 똥고집 부리다가 망해도 '역시 내 탓이 아님' 시전. 근데 리더십은 있어서 다들 욕하면서 따라감.", love: "연애에서도 내가 리드해야 직성이 풀림. 데이트 코스? 당연히 내가 정함. 상대방 의견? '응 그래 근데 여기 가자'. 밀당 같은 거 안 함. 대신 본인도 엄청 퍼줌.", money: "돈 벌 줄은 아는데 쓸 줄도 앎. 큰 그림 그리다가 세금 폭탄 맞기도 함. 투자? 본인 판단 믿고 올인하는 타입. 성공하면 천재, 실패하면 빚더미.", work: "본인이 팀장 아니면 불만 터짐. 상사 밑에서 '예예' 하는 거 체질적으로 못함. 어차피 사업하거나 최소 임원 해야 함.", advice: "고집 좀 그만 부리세요. 남 말도 가끔 맞습니다." },
+            '乙': { mbti: 'ISFP', base: "어디 던져도 살아남음. 강한 놈한텐 찰싹, 약한 놈한텐 쿨함. 멘탈 갈대긴 한데 뿌리가 콘크리트. 절대 안 죽음. 생존왕임.", love: "눈치로 밀당함. 상대방 반응 보면서 적절히 밀고 당기는데, 가끔 너무 눈치 봐서 지침. '뭐 먹고 싶어?' '아무거나~' 이러다 진짜 아무거나 시켜주면 삐침.", money: "실속파임. 티 안 나게 알뜰하게 모음. 세일이다 싶으면 일단 사재기. 근데 가끔 가성비에 눈 멀어서 필요 없는 것도 삼.", work: "적응력 甲. 어디서든 분위기 파악 빠름. 다만 승진 경쟁에선 밀릴 수 있음. 가끔 의견 좀 내세요.", advice: "여기저기 붙는 것도 능력인데 박쥐짓은 적당히." },
+            '丙': { mbti: 'ESFP', base: "본인이 주인공 아니면 병 남. 칭찬하면 간 쓸개 빼줌. 오지랖 태평양. 근데 돌아서면 까먹음. 단순함 끝판왕.", love: "좋아하면 온 세상에 광고함. SNS에 럽스타 폭격. 질투도 화끈함. 관심 안 주면 '나 싫어해?' 집착 모드 돌입.", money: "번 만큼 씀. 통장이 롤러코스터. 허세 지출 많음. 남 보기 좋은 곳에 돈 씀. 카드값 폭탄 주의.", work: "발표, PT 체질임. 무대에서 빛남. 다만 팩트체크 안 하고 분위기로 가다가 털림. 디테일 좀 챙기세요.", advice: "남 신경 끌 시간에 본인 앞가림부터." },
+            '丁': { mbti: 'INFJ', base: "겉은 천사, 속은 데스노트. 한번 삐지면 10년 뒤에 복수함. 새벽 감성 글 올리고 아침에 이불 킥.", love: "겉쿨속따. 표현 안 하는데 속으론 24시간 생각 중. 헌신형이라 퍼주는데 정작 표현 못해서 손해봄.", money: "꼼꼼히 모으는 스타일. 가계부 쓰고 예산 짬. 근데 좋아하는 사람한텐 지갑이 열림. 선물 폭탄.", work: "묵묵히 일하는데 티를 안 내서 공로 뺏김. 셀프 PR 좀 하세요. 가만히 있으면 아무도 몰라요.", advice: "혼자 소설 쓰지 말고 말로 하세요." },
+            '戊': { mbti: 'ESTJ', base: "속을 알 수 없음. 좋은지 싫은지 말 안 함. 그냥 있음. 고집 전교 1등. 건드리면 산사태.", love: "안정적 연애 추구. 한번 사귀면 오래감. 근데 변화가 없어서 상대방 지루해함. 이벤트 좀 해요.", money: "안전한 재테크. 부동산, 적금 좋아함. 리스크 싫어함. 근데 좋은 기회도 귀찮아서 놓침.", work: "조직의 버팀목. 신뢰감 있음. 다만 변화에 느려서 뒤처질 수 있음. 새로운 거 배우세요.", advice: "표현 안 하면 아무도 몰라요. 말 좀 하세요." },
+            '己': { mbti: 'ISFJ', base: "착한 척하는데 계산기 최강. 내 사람한텐 퍼주고 남이면 국물도 없음. 답정너.", love: "연애도 계산적. 손해 볼 연애 안 함. 근데 한번 진심 주면 올인. 그 진심까지 오래 걸림.", money: "돈 관리 신. 노후대비 완벽. 20대부터 연금 듦. 근데 너무 아껴서 인색해 보일 수 있음.", work: "실무 능력 좋음. 불필요한 일 안 함. 다만 티 안 내서 인정 못 받음. 어필하세요.", advice: "착한 척 적당히. 계산기 소리 다 들려요." },
+            '庚': { mbti: 'ESTP', base: "입만 열면 팩폭. '살쪘어?'를 '건강 걱정돼서'로 포장. 뒤끝은 없는데 앞끝이 쩔어서 멘탈 가루 만듦.", love: "직진형. 좋으면 바로 고백. 밀당 없음. 근데 연애 중에도 직설적이라 상처 줌. 필터링 좀.", money: "한방 스타일. 크게 벌거나 크게 잃거나. 손절 타이밍 못 잡아서 고집 부리다 더 잃음.", work: "추진력 甲. 근데 상사랑 충돌 많음. 본인이 대장 해야 스트레스 안 받음. 창업 고려하세요.", advice: "그 입 좀 다무세요. 팩트가 다 정의는 아닙니다." },
+            '辛': { mbti: 'INTP', base: "자기애 최강. 내가 제일 소중. 남이 건드리면 극혐. 칼날 같은 말투. 깔끔 떠는데 방은 더러움.", love: "이상형 기준 높음. 아무나 안 만남. 한번 빠지면 집착. 모든 것 체크함. 믿음 가지세요.", money: "꼼꼼 재테크. 포트폴리오 잘 짬. 근데 명품 좋아해서 자존심 소비도 있음.", work: "디테일 장인. 완성도 높음. 근데 완벽주의라 스트레스. 남 일에 간섭 말고 본인 일만.", advice: "남 지적 전에 거울부터. 님도 완벽 아님." },
+            '壬': { mbti: 'ENTP', base: "머리 회전 빠름. 근데 잔머리. 스케일 크게 노는데 마무리 안 됨. 속을 모르겠는 음흉함이 매력.", love: "자유로운 연애. 구속하면 도망감. 썸만 100개. 진심 꽂히면 로맨틱한데 그게 언제일지 모름.", money: "스케일 큰 투자 좋아함. 근데 허황된 것도 많음. 친구 사업 투자하다 날리기도. 현실적으로.", work: "아이디어맨. 기획 기가 막힘. 근데 실행력 부족. 실행력 있는 파트너 찾으세요.", advice: "잔머리 굴리다 자기 꾀에 넘어갑니다." },
             '癸': { mbti: 'INFP', base: "망상으로 우주 정복. 실행력 제로. 감정 롤러코스터. 근데 아이디어는 미침. 천재성.", love: "머릿속으론 로맨틱 극치. 현실은 아무것도 안 함. 상상 속에서 연애하고 이별함. 움직이세요.", money: "전략은 잘 짜는데 실행 안 함. '이번 달부터 적금'하고 6개월째. 자동이체 걸어놓으세요.", work: "브레인스토밍 빛남. 근데 그 다음이 없음. 누가 끌어줘야 빛나는 타입.", advice: "생각 그만하고 일단 시작하세요." }
         };
-        const Q = { today: ['점심 아무거나 금지', '모르는 사람한테 인사', 'SNS 1시간 금지'], week: ['미뤄둔 일 하나 끝내기', '안 가본 장소 가기'], year: ['버킷리스트 3개 쓰기', '새 취미 시작'] };
+        // Ten Gods (Ship-seong) Logic for Dynamic Fortune
+        const TEN_GODS = {
+            'Bi-gyeon': { name: '비견(比肩)', keywords: ['자존감', '경쟁', '독립'], desc: '나와 같은 기운이 들어오는 시기입니다. 주관이 뚜렷해지고 자신감이 넘치지만, 고집이 세져 주변과 마찰이 생길 수 있습니다. 경쟁보다는 협력을 택하세요.' },
+            'Geop-jae': { name: '겁재(劫財)', keywords: ['승부욕', '지출', '도전'], desc: '경쟁심이 불타오르는 시기입니다. 의외의 지출이나 손재수가 있을 수 있으니 지갑을 닫으세요. 하지만 승부수를 띄우기엔 좋은 날입니다.' },
+            'Sik-sin': { name: '식신(食神)', keywords: ['표현', '여유', '먹을복'], desc: '의식주가 풍요로워지는 시기입니다. 창의력이 솟아나고 말솜씨가 좋아집니다. 맛있는 것을 먹거나 취미 생활을 즐기기에 완벽합니다.' },
+            'Sang-gwan': { name: '상관(傷官)', keywords: ['언변', '반항', '아이디어'], desc: '기존의 틀을 깨고 싶은 욕구가 강해집니다. 톡톡 튀는 아이디어로 주목받지만, 말실수(구설수)를 조심해야 합니다.' },
+            'Pyeon-jae': { name: '편재(偏財)', keywords: ['횡재수', '유흥', '큰돈'], desc: '예상치 못한 돈이 들어오거나 나갈 수 있는 시기입니다. 사업적 수완이 좋아지고 유흥을 즐기고 싶어집니다. 로또 한 장 사보세요!' },
+            'Jeong-jae': { name: '정재(正財)', keywords: ['성실', '저축', '안정'], desc: '꼼꼼하고 현실적인 판단력이 좋아집니다. 차곡차곡 재물을 모으기에 좋습니다. 계획적인 소비와 투자가 빛을 발합니다.' },
+            'Pyeon-gwan': { name: '편관(偏官)', keywords: ['책임', '스트레스', '카리스마'], desc: '책임감이 무거워지고 스트레스를 받을 수 있습니다. 하지만 난관을 극복하면 큰 명예를 얻을 수 있는 시기입니다. 건강 관리에 유의하세요.' },
+            'Jeong-gwan': { name: '정관(正官)', keywords: ['승진', '명예', '원칙'], desc: '공명정대하고 바른 생활을 하게 되는 시기입니다. 직장에서능력을 인정받거나 합격운이 따릅니다. 원칙을 지키면 복이 옵니다.' },
+            'Pyeon-in': { name: '편인(偏印)', keywords: ['직관', '눈치', '고독'], desc: '눈치가 빨라지고 직관력이 예리해집니다. 남들이 못 보는 것을 보지만, 생각이 너무 많아 우울해질 수도 있습니다. 명상이나 공부가 잘 됩니다.' },
+            'Jeong-in': { name: '정인(正印)', keywords: ['인정', '학업', '귀인'], desc: '주변의 도움과 인정을 받는 사랑스러운 시기입니다. 문서운이 좋고 공부나 계약에 유리합니다. 윗사람에게 예쁨을 받습니다.' }
+        };
+
+        // Mapping: User's Element + Current Element -> Ten God
+        // [User Stem] -> { [Current Stem]: TenGodKey }
+        // Simplification for prototype: Mapping based on Element Relationship
+        // Same Element (Wood-Wood): Bi-gyeon/Geop-jae
+        // Generating Output (Wood-Fire): Sik-sin/Sang-gwan
+        // Being Controlled (Wood-Metal): Pyeon-gwan/Jeong-gwan
+        // Controlling (Wood-Earth): Pyeon-jae/Jeong-jae
+        // Generating Input (Wood-Water): Pyeon-in/Jeong-in
+        const REL_MAP = {
+            same: ['Bi-gyeon', 'Geop-jae'],
+            output: ['Sik-sin', 'Sang-gwan'],
+            control_me: ['Pyeon-gwan', 'Jeong-gwan'],
+            i_control: ['Pyeon-jae', 'Jeong-jae'],
+            input: ['Pyeon-in', 'Jeong-in']
+        };
         const E = { WOOD: { img: 'images/Wood.png', c: '#4ade80' }, FIRE: { img: 'images/Fire.png', c: '#f87171' }, EARTH: { img: 'images/Earth.png', c: '#fbbf24' }, METAL: { img: 'images/Metal.png', c: '#e2e8f0' }, WATER: { img: 'images/Water.png', c: '#60a5fa' } };
         const EM = { '甲': 'WOOD', '乙': 'WOOD', '丙': 'FIRE', '丁': 'FIRE', '戊': 'EARTH', '己': 'EARTH', '庚': 'METAL', '辛': 'METAL', '壬': 'WATER', '癸': 'WATER', '寅': 'WOOD', '卯': 'WOOD', '巳': 'FIRE', '午': 'FIRE', '辰': 'EARTH', '戌': 'EARTH', '丑': 'EARTH', '未': 'EARTH', '申': 'METAL', '酉': 'METAL', '亥': 'WATER', '子': 'WATER' };
         const LK = { WOOD: { c: '🌿 그린/민트', i: '식물, 동쪽 산책' }, FIRE: { c: '🔴 레드/퍼플', i: '캔들, 햇빛' }, EARTH: { c: '🟡 옐로우', i: '도자기' }, METAL: { c: '⚪ 화이트/실버', i: '쥬얼리' }, WATER: { c: '🔵 블랙/네이비', i: '물 많이 마시기' } };
+        // 천간→오행 / 상생상극 궁합
+        const STEM_EL = { '甲': 'WOOD', '乙': 'WOOD', '丙': 'FIRE', '丁': 'FIRE', '戊': 'EARTH', '己': 'EARTH', '庚': 'METAL', '辛': 'METAL', '壬': 'WATER', '癸': 'WATER' };
+        const GENERATING = { WOOD: 'WATER', FIRE: 'WOOD', EARTH: 'FIRE', METAL: 'EARTH', WATER: 'METAL' }; // 나를 도와주는
+        const OVERCOMING = { WOOD: 'METAL', FIRE: 'WATER', EARTH: 'WOOD', METAL: 'FIRE', WATER: 'EARTH' }; // 나를 극하는
+        const ELEMENT_STEM = { WOOD: '甲', FIRE: '丙', EARTH: '戊', METAL: '庚', WATER: '壬' };
+        const ELEMENT_COLORS = { WOOD: { bg: '#10b981', t: '#fff' }, FIRE: { bg: '#ef4444', t: '#fff' }, EARTH: { bg: '#eab308', t: '#1f2937' }, METAL: { bg: '#f8fafc', t: '#374151' }, WATER: { bg: '#1e1b4b', t: '#c4b5fd' } };
+        const ELEMENT_NAMES = { WOOD: '목(木)', FIRE: '화(火)', EARTH: '토(土)', METAL: '금(金)', WATER: '수(水)' };
         let uName = '', fType = 'today', curDm = '', curPd = null, curTheme = 'base', gender = 'M';
+        let userMbti = ''; // Store tested MBTI
         const trailCanvas = document.getElementById('trailCanvas'), tCtx = trailCanvas.getContext('2d'); let particles = [];
         function resizeTrail() { trailCanvas.width = innerWidth; trailCanvas.height = innerHeight } resizeTrail(); addEventListener('resize', resizeTrail);
         class Particle { constructor(x, y, b = false) { this.x = x; this.y = y; this.size = b ? Math.random() * 6 + 3 : Math.random() * 4 + 2; this.color = ['#00FFFF', '#E0B0FF', '#FFFFFF'][Math.floor(Math.random() * 3)]; this.alpha = 1; this.decay = b ? .03 : .02; const a = Math.random() * Math.PI * 2, s = b ? Math.random() * 4 + 2 : Math.random() + .5; this.vx = Math.cos(a) * s; this.vy = Math.sin(a) * s } update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; this.size *= .96 } draw() { tCtx.save(); tCtx.globalAlpha = this.alpha; tCtx.fillStyle = this.color; tCtx.shadowBlur = 15; tCtx.shadowColor = this.color; tCtx.beginPath(); tCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); tCtx.fill(); tCtx.restore() } isAlive() { return this.alpha > 0 } }
         function animateTrail() { tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height); particles = particles.filter(p => p.isAlive()); particles.forEach(p => { p.update(); p.draw() }); requestAnimationFrame(animateTrail) } animateTrail();
         let lastT = 0; document.addEventListener('mousemove', e => { const n = Date.now(); if (n - lastT > 30) { for (let i = 0; i < 3; i++)particles.push(new Particle(e.clientX, e.clientY)); lastT = n } });
         document.addEventListener('touchstart', e => { const t = e.touches[0]; for (let i = 0; i < 15; i++)particles.push(new Particle(t.clientX, t.clientY, true)) });
-        document.querySelectorAll('.fortune-sel button').forEach(b => b.onclick = () => { document.querySelectorAll('.fortune-sel button').forEach(x => x.classList.remove('on')); b.classList.add('on'); fType = b.dataset.t });
+        document.querySelectorAll('.fortune-sel button').forEach(b => b.onclick = () => { document.querySelectorAll('.fortune-sel button').forEach(x => x.classList.remove('on')); b.classList.add('on'); fType = b.dataset.t; updateQuest() });
         document.querySelectorAll('.gender-sel button').forEach(b => b.onclick = () => { document.querySelectorAll('.gender-sel button').forEach(x => x.classList.remove('on')); b.classList.add('on'); gender = b.dataset.g });
         document.querySelectorAll('.tab-row button').forEach(b => b.onclick = () => { document.querySelectorAll('.tab-row button').forEach(x => x.classList.remove('on')); document.querySelectorAll('.tab-c').forEach(x => x.classList.remove('on')); b.classList.add('on'); document.getElementById('tab-' + b.dataset.tab).classList.add('on') });
         document.querySelectorAll('.theme-tabs button').forEach(b => b.onclick = () => { document.querySelectorAll('.theme-tabs button').forEach(x => x.classList.remove('on')); b.classList.add('on'); curTheme = b.dataset.th; updateTheme() });
@@ -704,8 +1218,333 @@
         for (let m = 0; m < 60; m++)minS.innerHTML += `<option value="${m}">${String(m).padStart(2, '0')}분</option>`;
         document.getElementById('unknownTime').onchange = e => { const t = document.getElementById('timeInputs'); t.style.opacity = e.target.checked ? '.4' : '1'; t.style.pointerEvents = e.target.checked ? 'none' : 'auto' };
         function updateTheme() { if (!curPd) return; const k = { base: 'base', love: 'love', money: 'money', work: 'work' }; document.getElementById('storyBox').innerText = curPd[k[curTheme]] || curPd.base; document.getElementById('adviceTxt').innerText = curPd.advice }
-        function analyze() { uName = document.getElementById('userName').value.trim() || '익명'; let y, mo, d, h, mi; const tab = document.querySelector('.tab-row button.on').dataset.tab; if (tab === 'quick') { const v = document.getElementById('quickDate').value.trim(); if (!/^\d{8}$/.test(v)) { alert('8자리 숫자로 입력!'); return } y = +v.slice(0, 4); mo = +v.slice(4, 6); d = +v.slice(6, 8) } else { y = +yS.value; mo = +mS.value; d = +dS.value } if (mo < 1 || mo > 12 || d < 1 || d > 31) { alert('날짜 확인!'); return } if (document.getElementById('unknownTime').checked) { h = 12; mi = 0 } else { const ap = document.getElementById('selAmpm').value; let hh = +hS.value; mi = +minS.value; if (ap === 'PM' && hh !== 12) hh += 12; if (ap === 'AM' && hh === 12) hh = 0; h = hh } document.getElementById('inputSection').style.display = 'none'; document.getElementById('loading').style.display = 'flex'; setTimeout(() => { try { calc(y, mo, d, h, mi) } catch (e) { console.error(e); alert('오류!'); location.reload() } finally { document.getElementById('loading').style.display = 'none' } }, 2e3) }
-        function calc(y, mo, d, h, mi) { const s = Solar.fromYmdHms(y, mo, d, h, mi, 0), l = s.getLunar(), bz = l.getEightChar(); const p = [bz.getYearGan().toString(), bz.getYearZhi().toString(), bz.getMonthGan().toString(), bz.getMonthZhi().toString(), bz.getDayGan().toString(), bz.getDayZhi().toString(), bz.getTimeGan().toString(), bz.getTimeZhi().toString()]; const cnt = { WOOD: 0, FIRE: 0, EARTH: 0, METAL: 0, WATER: 0 }; p.forEach(c => { const e = EM[c]; if (e) cnt[e]++ }); curDm = bz.getDayGan().toString(); curPd = P[curDm] || P['甲']; let mn = 9, wk = 'WATER'; for (const [k, v] of Object.entries(cnt)) if (v < mn) { mn = v; wk = k } document.getElementById('result').style.display = 'block';['n1', 'n2', 'n3'].forEach(id => document.getElementById(id).innerText = uName); document.getElementById('soulC').innerText = curDm; document.getElementById('soulT').innerText = curPd.mbti; document.getElementById('mbtiBadge').innerText = curPd.mbti; document.getElementById('genderBadge').innerText = gender === 'M' ? '🙋‍♂️ 남자 (양)' : '🙋‍♀️ 여자 (음)'; curTheme = 'base'; document.querySelectorAll('.theme-tabs button').forEach((b, i) => b.classList.toggle('on', i === 0)); updateTheme(); const ch = document.getElementById('statChart'); ch.innerHTML = '';['WOOD', 'FIRE', 'EARTH', 'METAL', 'WATER'].forEach(k => { const e = E[k], c = cnt[k], pc = (c / 8) * 100; ch.innerHTML += `<div class="stat-row"><img src="${e.img}" alt=""><div class="stat-track"><div class="stat-fill" style="background:${e.c}" data-w="${pc}%"></div></div><span class="stat-n">${c}</span></div>` }); setTimeout(() => document.querySelectorAll('.stat-fill').forEach(b => b.style.width = b.dataset.w), 100); const lk = LK[wk], le = E[wk]; const genderTip = gender === 'M' ? '행동력을 높여보세요' : '직관을 믿어보세요'; document.getElementById('luckBox').innerHTML = `<div class="luck-dot" style="background:${le.c};color:${le.c}"></div><div class="luck-info"><strong>${lk.c}</strong><span>${lk.i} | ${genderTip}</span></div>`; const qa = Q[fType]; document.getElementById('questTxt').innerText = qa[Math.floor(Math.random() * qa.length)] }
+        // Advanced Saju Logic: Modifiers
+        const BRANCH_MODIFIERS = {
+            '子': { k: '창의적', d: '생각이 깊고 비밀이 많음' }, '丑': { k: '성실함', d: '묵묵히 자신의 길을 감' },
+            '寅': { k: '활동적', d: '추진력이 강하고 리더십 있음' }, '卯': { k: '섬세함', d: '다정하고 인정이 많음' },
+            '辰': { k: '이상적', d: '포부가 크고 꿈을 쫓음' }, '巳': { k: '현실적', d: '계산이 빠르고 실속을 챙김' },
+            '午': { k: '열정적', d: '화려하고 나서기를 좋아함' }, '未': { k: '온화함', d: '참을성이 많으나 고집 있음' },
+            '申': { k: '다재다능', d: '임기응변이 뛰어나고 재주가 많음' }, '酉': { k: '예리함', d: '완벽주의적이고 깔끔함' },
+            '戌': { k: '충직함', d: '신의를 지키고 방어적임' }, '亥': { k: '지혜로움', d: '포용력이 넓고 유연함' }
+        };
+
+        const SEASON_MODIFIERS = {
+            '寅': '초봄의', '卯': '봄의', '辰': '늦봄의',
+            '巳': '초여름의', '午': '여름의', '未': '늦여름의',
+            '申': '초가을의', '酉': '가을의', '戌': '늦가을의',
+            '亥': '초겨울의', '子': '겨울의', '丑': '늦겨울의'
+        };
+
+        function getDetailedPersonality(stem, branch, monthBranch) {
+            const base = P[stem] || P['甲'];
+            const brMod = BRANCH_MODIFIERS[branch] || { k: '', d: '' };
+            const season = SEASON_MODIFIERS[monthBranch] || '계절의';
+
+            // Construct dynamic personality text
+            return {
+                summary: `${season} ${brMod.d}`,
+                desc: `당신은 <strong>${season} 에너지</strong>를 타고난 <strong>${stem}(${ELEMENT_NAMES[EM[stem]]})</strong>입니다.<br>
+                       ${brMod.d} 성향(${brMod.k})이 더해져, ${base.base.split('.')[0]} 특징이 있습니다.`
+            };
+        }
+
+        function updateQuest() {
+            if (!curDm) return;
+            // Calculate Ten Gods
+            const now = new Date();
+            let targetStem = '';
+            let timeLabel = '';
+
+            // Using Solar/Lunar library to get current stems
+            // Note: In real app, consider strict lunar calendar logic. Here using simple conversion.
+            const s = Solar.fromYmd(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            const l = s.getLunar();
+            const bz = l.getEightChar();
+
+            if (fType === 'today') {
+                targetStem = bz.getDayGan().toString();
+                timeLabel = "오늘의 운세";
+            } else if (fType === 'week') {
+                // Saju doesn't have 'week', using Month Stem (Wol-un) as proxy for short-term flow
+                targetStem = bz.getMonthGan().toString();
+                timeLabel = "이번 달(주간) 운세";
+            } else {
+                targetStem = bz.getYearGan().toString();
+                timeLabel = "올해의 운세";
+            }
+
+            // Determine Relationship
+            const uEl = STEM_EL[curDm]; // User Element
+            const tEl = STEM_EL[targetStem]; // Target Element (Time)
+
+            let relType = '';
+
+            // Simplification: Standard 10 Gods Logic
+            // 1. Compare Element (Same, Output, Wealth, Control, Input)
+            // 2. Compare Polarity (Yin/Yang)
+
+            if (uEl === tEl) relType = 'same';
+            else if (GENERATING[uEl] === tEl) relType = 'output'; // I generate -> Output (Sik-Sang)
+            else if (OVERCOMING[uEl] === tEl) relType = 'i_control'; // I overcome -> Wealth (Jae-Seong)
+            else if (OVERCOMING[tEl] === uEl) relType = 'control_me'; // It overcomes me -> Officer (Gwan-Seong)
+            else if (GENERATING[tEl] === uEl) relType = 'input'; // It generates me -> Resource (In-Seong)
+
+            // Polarity Check
+            const isYang = (s) => ['甲', '丙', '戊', '庚', '壬'].includes(s);
+            const samePol = isYang(curDm) === isYang(targetStem);
+
+            const godKey = REL_MAP[relType][samePol ? 0 : 1];
+            const god = TEN_GODS[godKey];
+
+            document.getElementById('questTxt').innerHTML = `
+                <span style="font-size:0.9rem; color:var(--cyan); display:block; margin-bottom:4px;">[${timeLabel}: ${god.name}]</span>
+                ${god.desc}<br>
+                <span style="font-size:0.8rem; color:var(--txt2); margin-top:6px; display:block;">🔑 키워드: ${god.keywords.join(', ')}</span>
+             `;
+        }
+        function analyze() { uName = document.getElementById('userName').value.trim() || '익명'; let y, mo, d, h, mi; const tab = document.querySelector('.tab-row button.on').dataset.tab; if (tab === 'quick') { const v = document.getElementById('quickDate').value.trim(); if (!/^\d{8}$/.test(v)) { alert('8자리 숫자로 입력!'); return } y = +v.slice(0, 4); mo = +v.slice(4, 6); d = +v.slice(6, 8) } else { y = +yS.value; mo = +mS.value; d = +dS.value } if (mo < 1 || mo > 12 || d < 1 || d > 31) { alert('날짜 확인!'); return } if (document.getElementById('unknownTime').checked) { h = 12; mi = 0 } else { const ap = document.getElementById('selAmpm').value; let hh = +hS.value; mi = +minS.value; if (ap === 'PM' && hh !== 12) hh += 12; if (ap === 'AM' && hh === 12) hh = 0; h = hh } document.getElementById('inputSection').style.display = 'none'; document.getElementById('loading').style.display = 'flex'; setTimeout(() => { try { if (typeof Solar === 'undefined') throw new Error('Solar library not loaded'); calc(y, mo, d, h, mi) } catch (e) { console.error(e); alert('죄송합니다. 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.'); location.reload() } finally { document.getElementById('loading').style.display = 'none' } }, 1500) }
+        function calc(y, mo, d, h, mi) {
+            const s = Solar.fromYmdHms(y, mo, d, h, mi, 0), l = s.getLunar(), bz = l.getEightChar();
+            const yG = bz.getYearGan().toString(), yZ = bz.getYearZhi().toString();
+            const mG = bz.getMonthGan().toString(), mZ = bz.getMonthZhi().toString();
+            const dG = bz.getDayGan().toString(), dZ = bz.getDayZhi().toString();
+            const tG = bz.getTimeGan().toString(), tZ = bz.getTimeZhi().toString();
+            const p = [yG, yZ, mG, mZ, dG, dZ, tG, tZ];
+            const cnt = { WOOD: 0, FIRE: 0, EARTH: 0, METAL: 0, WATER: 0 };
+            p.forEach(c => { const e = EM[c]; if (e) cnt[e]++ });
+            curDm = dG; curPd = P[curDm] || P['甲'];
+            // 만세력 4기둥 렌더링
+            const pillars = [
+                { label: '시주', stem: tG, branch: tZ },
+                { label: '일주', stem: dG, branch: dZ },
+                { label: '월주', stem: mG, branch: mZ },
+                { label: '년주', stem: yG, branch: yZ }
+            ];
+            let pillarsHTML = '';
+            pillars.forEach(pil => {
+                const sEl = EM[pil.stem] || 'EARTH', bEl = EM[pil.branch] || 'EARTH';
+                const sC = ELEMENT_COLORS[sEl], bC = ELEMENT_COLORS[bEl];
+                pillarsHTML += `<div class="pillar"><span class="pillar-label">${pil.label}</span><div class="stem" style="background:${sC.bg};color:${sC.t}">${pil.stem}</div><div class="branch" style="background:${bC.bg};color:${bC.t}">${pil.branch}</div></div>`;
+            });
+            document.getElementById('pillarsBox').innerHTML = pillarsHTML;
+            document.getElementById('pillarsBox').innerHTML = pillarsHTML;
+
+            // Generate Dynamic Message
+            const detail = getDetailedPersonality(dG, dZ, mZ);
+            document.getElementById('sajuMsg').innerHTML = `당신의 사주를 분석한 결과, 타고난 기질은 <strong>${detail.summary} ${ELEMENT_NAMES[EM[dG]]}</strong>입니다.`;
+            // Also update the main text box with richer description if needed, or keep the specific 'storyBox' updated
+            // For now, let's update the 'storyBox' content dynamically too? 
+            // Actually, let's inject the dynamic description into the intro message for maximum effect.
+            document.getElementById('sajuMsg').innerHTML += `<br><span style="font-size:0.9rem; color:var(--txt2); font-weight:normal; display:block; margin-top:8px;">${detail.desc}</span>`;
+            // 궁합: 상생상극
+            const myEl = STEM_EL[curDm] || 'WOOD';
+            const bestEl = GENERATING[myEl], worstEl = OVERCOMING[myEl];
+            const bestStem = ELEMENT_STEM[bestEl], worstStem = ELEMENT_STEM[worstEl];
+            const bestMbti = P[bestStem]?.mbti || 'ENTP', worstMbti = P[worstStem]?.mbti || 'ESTP';
+            document.getElementById('bestMatch').innerHTML = `${bestStem} (${bestMbti}) - ${ELEMENT_NAMES[bestEl]}의 기운`;
+            document.getElementById('worstMatch').innerHTML = `${worstStem} (${worstMbti}) - ${ELEMENT_NAMES[worstEl]}의 기운`;
+            // 기존 결과 표시
+            let mn = 9, wk = 'WATER';
+            for (const [k, v] of Object.entries(cnt)) if (v < mn) { mn = v; wk = k }
+            document.getElementById('result').style.display = 'block';
+            ['n0', 'n1', 'n2', 'n3'].forEach(id => document.getElementById(id).innerText = uName);
+            document.getElementById('soulC').innerText = curDm;
+            document.getElementById('soulT').innerText = curPd.mbti;
+            // document.getElementById('mbtiBadge').innerText = curPd.mbti; // Removed: element does not exist
+            document.getElementById('genderBadge').innerText = gender === 'M' ? '🙋‍♂️ 남자 (양)' : '🙋‍♀️ 여자 (음)';
+            curTheme = 'base';
+            document.querySelectorAll('.theme-tabs button').forEach((b, i) => b.classList.toggle('on', i === 0));
+            updateTheme();
+            const ch = document.getElementById('statChart'); ch.innerHTML = '';
+            ['WOOD', 'FIRE', 'EARTH', 'METAL', 'WATER'].forEach(k => {
+                const e = E[k], c = cnt[k], pc = (c / 8) * 100;
+                ch.innerHTML += `<div class="stat-row"><img src="${e.img}" alt=""><div class="stat-track"><div class="stat-fill" style="background:${e.c}" data-w="${pc}%"></div></div><span class="stat-n">${c}</span></div>`;
+            });
+            setTimeout(() => document.querySelectorAll('.stat-fill').forEach(b => b.style.width = b.dataset.w), 100);
+            const lk = LK[wk], le = E[wk];
+            const genderTip = gender === 'M' ? '행동력을 높여보세요' : '직관을 믿어보세요';
+            document.getElementById('luckBox').innerHTML = `<div class="luck-dot" style="background:${le.c};color:${le.c}"></div><div class="luck-info"><strong>${lk.c}</strong><span>${lk.i} | ${genderTip}</span></div>`;
+            updateQuest(); // Initial update
+
+            // Trigger Mini Popup after a delay
+            setTimeout(() => {
+                if (!userMbti && document.getElementById('result').style.display === 'block') {
+                    const popup = document.getElementById('mbtiMiniPopup');
+                    popup.classList.add('show');
+                }
+            }, 3500); // Show popup after 3.5s reading time
+
+            // MBTI 비교 표시 (Logic Refined) : UI Simplified
+            document.getElementById('sajuMbti').innerHTML = `${curDm}`;
+
+            // Comparison Text Logic for Modal (Future use) & Soul Text
+            if (userMbti) {
+                let cTxt = "";
+                if (curPd.mbti === userMbti) {
+                    cTxt = "<br><span style='font-size:0.85rem; color:var(--cyan); font-weight:700'>😲 소름! 본캐랑 부캐가 똑같네요!</span><br><span style='font-size:0.75rem; color:var(--txt2)'>타고난 대로 잘 살고 계시군요.</span>";
+                } else {
+                    const diffCount = (curPd.mbti[0] !== userMbti[0]) + (curPd.mbti[1] !== userMbti[1]) + (curPd.mbti[2] !== userMbti[2]) + (curPd.mbti[3] !== userMbti[3]);
+                    if (diffCount >= 3) {
+                        cTxt = `<br><span style='font-size:0.85rem; color:var(--pink); font-weight:700'>😱 헐! 타고난 거랑 완전 딴판인데요?</span><br><span style='font-size:0.75rem; color:var(--txt2)'>사회생활 하느라 고생이 많으시네요..</span>`;
+                    } else {
+                        cTxt = `<br><span style='font-size:0.85rem; color:var(--yellow); font-weight:700'>🤔 음.. 현실 타협 좀 하셨군요?</span><br><span style='font-size:0.75rem; color:var(--txt2)'>타고난 성향(${curPd.mbti})과 조금 다르네요.</span>`;
+                    }
+                }
+                document.getElementById('soulT').innerHTML = cTxt;
+
+            } else {
+                // Reset comparison text
+                document.getElementById('soulT').innerHTML = "";
+            }
+        }
+
+        // MBTI Test Logic
+        const questions = [
+            { t: "EI", q: "친구가 갑자기 '지금 나와!'라고 한다면?", a: [{ t: "E", v: "오 꿀잼ㅋ 바로 나감" }, { t: "I", v: "아... 기 빨리는데 핑계 댈까?" }] },
+            { t: "EI", q: "파티에서 모르는 사람이 말을 걸면?", a: [{ t: "E", v: "오 반가워요! (바로 인스타 맞팔)" }, { t: "I", v: "(어색한 미소) 아 예... (도망갈 각 잰다)" }] },
+            { t: "EI", q: "일주일 동안 집 밖에 안 나가기 가능?", a: [{ t: "E", v: "절대 불가. 벽이랑 대화할 듯" }, { t: "I", v: "천국 아님? 넷플릭스 정주행 개꿀" }] },
+
+            { t: "SN", q: "멍 때릴 때 무슨 생각 해?", a: [{ t: "S", v: "배고프다, 저녁 뭐 먹지" }, { t: "N", v: "좀비가 나타나면 어디로 튀지?" }] },
+            { t: "SN", q: "여행 갈 때 계획은?", a: [{ t: "S", v: "맛집 리스트, 동선 체크 완벽" }, { t: "N", v: "일단 가서 느낌 오는 대로~" }] }, // This is actually J/P usually but fitting S/N context of concrete vs abstract
+            { t: "SN", q: "영화를 볼 때 더 중요한 건?", a: [{ t: "S", v: "배우 연기, 영상미, 현실 고증" }, { t: "N", v: "숨겨진 의미, 감독의 메시지, 세계관" }] },
+
+            { t: "TF", q: "친구가 차 사고 났다고 전화하면?", a: [{ t: "T", v: "보험 불렀어? 다친 덴 없고?" }, { t: "F", v: "헐 괜찮아??! 많이 놀랐지 ㅠㅠ" }] },
+            { t: "TF", q: "친구가 '나 우울해서 머리 잘랐어'라고 하면?", a: [{ t: "T", v: "얼마 줬어? 잘 어울리네" }, { t: "F", v: "무슨 일 있었어? 왜 우울해 ㅠㅠ" }] },
+            { t: "TF", q: "회의 중 내 의견이 반박당하면?", a: [{ t: "T", v: "아 그런가? 논리적으로 맞네 (수긍)" }, { t: "F", v: "아... (마상 입음, 집 가서 이불킥)" }] },
+
+            { t: "JP", q: "2주 뒤 여행, 지금 내 상태는?", a: [{ t: "J", v: "숙소 예약 완료, 엑셀로 일정 정리 중" }, { t: "P", v: "비행기 표는 끊었나? 아 몰라 그때 가서" }] },
+            { t: "JP", q: "책상 위 상태는?", a: [{ t: "J", v: "각 잡혀 있음. 물건 제자리" }, { t: "P", v: "카오스 그 자체. 근데 어디 뭐 있는진 앎" }] },
+            { t: "JP", q: "약속 시간 1시간 전, 친구가 '30분 늦을 듯'이라 한다면?", a: [{ t: "J", v: "아... 내 계획 다 꼬이는데 (짜증)" }, { t: "P", v: "오 개꿀ㅋ 나도 천천히 가야지" }] }
+        ];
+
+        let qIdx = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        const MBTI_DESC = {
+            'ISTJ': "현실주의자 그 자체. 약속 시간 1분 늦으면 손절각. 겉으론 꼰대 같아 보이지만 책임감 하나는 우주 최강. 계획 틀어지면 고장남.",
+            'ISFJ': "착한 척하는데 속으로 욕하고 있음. 남 챙겨주는 척하면서 내 사람 챙김. 뒤끝 쩔어서 3년 전 일도 기억함.",
+            'INFJ': "겉으론 웃는데 속으론 인류 멸망 시나리오 씀. 남 눈치 보느라 피곤함. 도덕적인 척하지만 속으론 제일 음흉할 수도.",
+            'INTJ': "인간 혐오자. 멍청한 사람 보면 화남. 혼자 있는 게 제일 좋음. 계획한 대로 안 되면 세상 무너짐.",
+            'ISTP': "만사가 귀찮음. 효율충. 남한테 관심 없음. 영혼 없다는 소리 자주 들음. 근데 뭐 하나 꽂히면 무서움.",
+            'ISFP': "침대 성애자. 약속 취소되면 기뻐함. 착한데 우유부단함. 거절 못해서 호구 잡힘. 갬성 충만.",
+            'INFP': "망상 전문가. 유리 멘탈. 혼자 있는 거 좋은데 외로운 건 싫음. 착한데 가끔 흑화하면 무서움.",
+            'INTP': "논리왕. 말싸움하면 절대 안 짐. 공감 능력 제로. 팩폭 하다가 친구 다 떠나감. 방구석 아인슈타인.",
+            'ESTP': "스릴 중독자. 내일은 없다. 일단 저지르고 봄. 말이 행동보다 빠름. 팩폭러. 남 눈치 안 봄.",
+            'ESFP': "관종 그 자체. 사람 만나는 게 에너지 충전. 분위기 메이커. 진지한 거 딱 질색. 카드값 폭탄 주의.",
+            'ENFP': "댕댕이 인간형. 리액션 혜자. 금사빠. 감정 기복 롤러코스터. 머릿속에 꽃밭 있음. 뒷마무리 안 됨.",
+            'ENTP': "논쟁 즐기는 변태. 남 골탕 먹이는 거 좋아함. 아이디어 뱅크. 고집 셈. 자기애 폭발.",
+            'ESTJ': "젊은 꼰대. 일 중독자. 감정팔이 극혐. 리더 하고 싶어 함. 잔소리 대마왕. 융통성 제로.",
+            'ESFJ': "오지랖 대마왕. 남 챙기는 게 낙. 칭찬 안 해주면 삐짐. 뒷담화 좋아함. 분위기 못 맞추면 못 참음.",
+            'ENFJ': "평화주의자. 남들 싸우면 말려야 함. 오글거리는 멘트 장인. 멘탈 약함. 남 돕다가 내 코가 석자.",
+            'ENTJ': "독재자 기질. 일 못하는 사람 극혐. 목표 달성 위해선 수단 방법 안 가림. 워커홀릭. 공감 능력 부족."
+        };
+
+        function startMbtiTest() {
+            // 정보 입력 확인 Logic 추가
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert('이름을 먼저 입력해주세요! 😅');
+                document.getElementById('userName').focus();
+                return;
+            }
+
+            const tab = document.querySelector('.tab-row button.on').dataset.tab;
+            let isValidDate = false;
+
+            if (tab === 'quick') {
+                const v = document.getElementById('quickDate').value.trim();
+                if (/^\d{8}$/.test(v)) {
+                    isValidDate = true;
+                }
+            } else {
+                // Detail tab validation generally assumed valid via selects, but good to check context
+                isValidDate = true;
+            }
+
+            if (!isValidDate) {
+                alert('생년월일을 먼저 입력해주세요! 📅');
+                if (tab === 'quick') document.getElementById('quickDate').focus();
+                return;
+            }
+
+            // 모든 정보가 있으면 테스트 시작
+            document.getElementById('mbtiModal').style.display = 'flex';
+            qIdx = 0;
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            showQuestion();
+        }
+
+        function closeMbtiTest() {
+            if (confirm('테스트를 그만두시겠습니까? 기록은 저장되지 않습니다.')) {
+                document.getElementById('mbtiModal').style.display = 'none';
+            }
+        }
+
+        function showQuestion() {
+            const q = questions[qIdx];
+            const qBox = document.getElementById('qBox');
+            document.getElementById('qNum').innerText = `${qIdx + 1} / ${questions.length}`;
+            document.getElementById('mbtiBar').style.width = `${((qIdx + 1) / questions.length) * 100}%`;
+
+            qBox.innerHTML = `
+                <div class="q-card">
+                    <p class="q-text">${q.q}</p>
+                    <button class="opt-btn" onclick="answer('${q.a[0].t}')">A. ${q.a[0].v}</button>
+                    <button class="opt-btn" onclick="answer('${q.a[1].t}')">B. ${q.a[1].v}</button>
+                </div>
+            `;
+        }
+
+        function answer(type) {
+            scores[type]++;
+            qIdx++;
+            if (qIdx < questions.length) {
+                showQuestion();
+            } else {
+                finishTest();
+            }
+        }
+
+        function finishTest() {
+            const r =
+                (scores.E >= scores.I ? 'E' : 'I') +
+                (scores.S >= scores.N ? 'S' : 'N') +
+                (scores.T >= scores.F ? 'T' : 'F') +
+                (scores.J >= scores.P ? 'J' : 'P');
+            userMbti = r;
+            document.getElementById('mbtiModal').style.display = 'none';
+
+            // Show Result Modal
+            const desc = MBTI_DESC[r] || "알 수 없는 유형";
+            let compMsg = "";
+
+            if (curPd) {
+                const sajuM = curPd.mbti;
+                if (sajuM) {
+                    if (sajuM === r) {
+                        compMsg = `😲 <strong>소름!</strong> 타고난 운명(${sajuM})과 현재 성격이 완벽하게 일치합니다! 본캐와 부캐가 하나시네요.`;
+                    } else {
+                        compMsg = `🤔 타고난 운명은 <strong>${sajuM}</strong>인데, 실제로는 <strong>${r}</strong>로 살고 계시네요! 사회생활 하느라 성격이 좀 바뀌셨나요?`;
+                    }
+                }
+            } else {
+                compMsg = "사주 결과를 먼저 보면 비교 분석도 해드려요!";
+            }
+
+            document.getElementById('resMbtiTitle').innerText = r;
+            document.getElementById('resMbtiDesc').innerText = desc;
+            document.getElementById('resCompareTxt').innerHTML = compMsg;
+            document.getElementById('mbtiResultModal').style.display = 'flex';
+
+            // Update Main Result View if visible
+            if (document.getElementById('result').style.display === 'block') {
+                analyze();
+            }
+        }
+
+        function closeMbtiResult() {
+            document.getElementById('mbtiResultModal').style.display = 'none';
+        }
         function shareKakao() { if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) { alert('카카오 SDK 초기화 필요'); return } Kakao.Share.sendDefault({ objectType: 'feed', content: { title: `${uName}님의 영혼 캐릭터는 [${curDm}]!`, description: curPd ? curPd.mbti + ' - ' + curPd.base.slice(0, 40) + '...' : '사주 분석 해보세요!', imageUrl: 'https://choiseokhee4u-svg.github.io/Saju_TheMoon/images/Fire.png', link: { mobileWebUrl: 'https://choiseokhee4u-svg.github.io/Saju_TheMoon/', webUrl: 'https://choiseokhee4u-svg.github.io/Saju_TheMoon/' } }, buttons: [{ title: '내 운명 확인하기', link: { mobileWebUrl: 'https://choiseokhee4u-svg.github.io/Saju_TheMoon/', webUrl: 'https://choiseokhee4u-svg.github.io/Saju_TheMoon/' } }] }) }
     </script>
 </body>
